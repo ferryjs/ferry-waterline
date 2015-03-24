@@ -1,19 +1,58 @@
 'use strict';
 
-import Storage from 'ferry/lib/Storage';
+import {Storage} from 'ferry';
 
-class Waterline extends Storage {
+import Waterline from 'waterline';
 
-  constructor(adapter) {
+class WaterlineAdapter extends Storage {
 
-    if (typeof adapter === 'undefined') {
-      adapter = require('./diskAdapter');
+  constructor(config) {
+
+    if (typeof config === 'undefined') {
+      config = require('./diskAdapter');
     }
 
-    console.log(adapter)
+    this.config = config;
+
+    this.engine = new Waterline();
+
+  }
+
+  initialize(resources, callback) {
+
+    let self = this;
+
+    for (let resource in resources) {
+
+      // @todo Copy from resource object? Probably need converters.
+      let schema = resources[resource].schema || {};
+
+      schema.identity = resource.toLowerCase();
+
+      // @todo This should be customisable.
+      schema.connection = 'default';
+
+      // Load the resource into Waterline.
+      this.engine.loadCollection(Waterline.Collection.extend(schema));
+
+    }
+
+    this.engine.initialize(this.config, function(error, details) {
+
+      // Store the initialized Waterline models.
+      self.models = details.collections;
+
+      // Store the Waterline connections.
+      self.connections = details.connections;
+
+      if (typeof callback === 'function') {
+        callback(error);
+      }
+
+    });
 
   }
 
 };
 
-export default Waterline;
+export default WaterlineAdapter;
