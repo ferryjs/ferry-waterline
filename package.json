@@ -1,15 +1,19 @@
 {
   "name": "ferry-waterline",
   "version": "1.0.0",
-  "description": "Waterline storage adapter for FerryJS.",
+  "description": "Waterline storage engine adapter for Ferry.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ferryjs/ferry-waterline"
+  },
   "main": "lib/Waterline",
   "scripts": {
     "test": "mocha",
     "build": "babel src --out-dir lib --source-maps",
     "watch": "babel src --out-dir lib --watch --source-maps",
-    "postinstall": "npm run build",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "ferry": "ferryjs/ferry#development",
