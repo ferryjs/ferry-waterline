@@ -53,6 +53,52 @@ class WaterlineAdapter extends Storage {
 
   }
 
-};
+  find(model, query, callback) {
+    this.getModel(model).find(query).exec(function(error, resources) {
+      if (error) throw error;
+      callback(resources);
+    });
+  }
+
+  // @todo Does this method serve any real purpose?
+  findOne(model, query, callback) {
+    this.getModel(model).findOne(query).exec(function(error, resource) {
+      if (error) throw error;
+      callback(resource);
+    });
+  }
+
+  // @todo Allow customizing ID parameter name.
+  findById(model, id, callback) {
+    this.getModel(model).findOne({ id: id }).exec(function(error, resource) {
+      if (error) throw error;
+      callback(resource);
+    });
+  }
+
+  create(model, properties, callback) {
+    this.getModel(model).create(properties).exec(function(error, resource) {
+      if (error) throw error;
+      callback(resource);
+    });
+  }
+
+  update(model, id, properties, callback) {
+    // Don't pass ID in updated properties.
+    delete properties.id;
+    this.getModel(model).update({ id: id }, properties).exec(function(error, resource) {
+      if (error) throw error;
+      callback(resource);
+    });
+  }
+
+  destroy(model, id, callback) {
+    this.getModel(model).destroy({ id: id }).exec(function(error) {
+      if (error) throw error;
+      callback();
+    });
+  }
+
+}
 
 export default WaterlineAdapter;
