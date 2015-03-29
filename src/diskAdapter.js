@@ -8,5 +8,8 @@ export default {
     default: {
       adapter: 'default'
     }
+  },
+  defaults: {
+    migrate: 'safe'
   }
 };
