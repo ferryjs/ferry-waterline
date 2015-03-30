@@ -20,8 +20,6 @@ class WaterlineAdapter extends Storage {
 
   initialize(resources, callback) {
 
-    let self = this;
-
     for (let resource in resources) {
 
       // @todo Copy from resource object? Probably need converters.
@@ -37,16 +35,16 @@ class WaterlineAdapter extends Storage {
 
     }
 
-    this.engine.initialize(this.config, function(error, details) {
+    this.engine.initialize(this.config, (err, details) => {
 
       // Store the initialized Waterline models.
-      self.models = details.collections;
+      this.models = details.collections;
 
       // Store the Waterline connections.
-      self.connections = details.connections;
+      this.connections = details.connections;
 
       if (typeof callback === 'function') {
-        callback(error);
+        return callback(err);
       }
 
     });
