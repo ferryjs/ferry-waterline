@@ -20,8 +20,6 @@ class WaterlineAdapter extends Storage {
 
   initialize(resources, callback) {
 
-    let self = this;
-
     for (let resource in resources) {
 
       // @todo Copy from resource object? Probably need converters.
@@ -37,22 +35,68 @@ class WaterlineAdapter extends Storage {
 
     }
 
-    this.engine.initialize(this.config, function(error, details) {
+    this.engine.initialize(this.config, (err, details) => {
 
       // Store the initialized Waterline models.
-      self.models = details.collections;
+      this.models = details.collections;
 
       // Store the Waterline connections.
-      self.connections = details.connections;
+      this.connections = details.connections;
 
       if (typeof callback === 'function') {
-        callback(error);
+        return callback(err);
       }
 
     });
 
   }
 
-};
+  find(model, query, callback) {
+    this.getModel(model).find(query).exec(function(error, resources) {
+      if (error) throw error;
+      callback(resources);
+    });
+  }
+
+  // @todo Does this method serve any real purpose?
+  findOne(model, query, callback) {
+    this.getModel(model).findOne(query).exec(function(error, resource) {
+      if (error) throw error;
+      callback(resource);
+    });
+  }
+
+  // @todo Allow customizing ID parameter name.
+  findById(model, id, callback) {
+    this.getModel(model).findOne({ id: id }).exec(function(error, resource) {
+      if (error) throw error;
+      callback(resource);
+    });
+  }
+
+  create(model, properties, callback) {
+    this.getModel(model).create(properties).exec(function(error, resource) {
+      if (error) throw error;
+      callback(resource);
+    });
+  }
+
+  update(model, id, properties, callback) {
+    // Don't pass ID in updated properties.
+    delete properties.id;
+    this.getModel(model).update({ id: id }, properties).exec(function(error, resource) {
+      if (error) throw error;
+      callback(resource);
+    });
+  }
+
+  destroy(model, id, callback) {
+    this.getModel(model).destroy({ id: id }).exec(function(error) {
+      if (error) throw error;
+      callback();
+    });
+  }
+
+}
 
 export default WaterlineAdapter;
